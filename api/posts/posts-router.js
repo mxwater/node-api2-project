@@ -69,18 +69,25 @@ router.put('/:id', (req, res) => {
     
 })
 router.delete('/:id', async (req, res) => {
-    try{
-        throw new Error ('sad!!!')
-    } catch(err) {
-        res.status(500).json ({
+    try {
+        const maybe = await Post.findById(req.params.id);
+        if (!maybe) {
+            res.status(404).json({
+                message: "The post with the specified ID does not exist",
+            });
+        } else {
+            await Post.remove(req.params.id);  // Use await to handle the promise
+            res.status(200).json({ message: "The post has been deleted" });
+        }
+    } catch (err) {
+        res.status(500).json({
             message: "The post could not be removed",
             err: err.message,
             stack: err.stack,
-        })     
-
+        });
     }
+});
     
-})
 router.get('/:id/comments', (req, res) => {
     
 })
